@@ -13,7 +13,7 @@ Mark each row after testing. Demo password for all users: `Demo@1234`.
 | 6 | Dashboard | Admin summary | activeEmployees 6, numbers match seed | PASS |
 | 7 | Dashboard | Manager summary | Team numbers only (2 employees) | PASS |
 | 8 | Dashboard | Employee summary | Personal summary with leave balances | PASS |
-| 9 | Dashboard | Add a leave request, call summary again | pendingLeaveRequests changes | [ ] |
+| 9 | Dashboard | Add a leave request, call summary again | pendingLeaveRequests changes | Pending: needs Backend 2 leave API |
 | 10 | Notifications | GET /notifications as employee1 | Own notifications only | PASS |
 | 11 | Notifications | PATCH /notifications/:id/read on someone else's id | 404 | PASS |
 | 12 | Announcements | Employee POSTs an announcement | 403 | PASS |
@@ -36,7 +36,7 @@ Mark each row after testing. Demo password for all users: `Demo@1234`.
 | 29 | Probation | POST with end date before start date | 400 | PASS |
 | 30 | General | Wrong JSON body | 400, no crash | PASS |
 | 31 | General | Unknown URL | 404 | PASS |
-| 32 | General | No secrets or .env committed | Confirmed | [ PASS] |
+| 32 | General | No secrets or .env committed | Confirmed | PASS |
 | 33 | Alerts | Employee calls POST /attendance-alerts/run | 403 | PASS |
 | 34 | Alerts | Admin runs it (first time today, weekday) | 200, late 1, absent 1, created 4 | PARTIAL |
 | 35 | Alerts | Admin runs it again | 200, created 0 (no duplicates) | PASS |
@@ -47,16 +47,17 @@ Mark each row after testing. Demo password for all users: `Demo@1234`.
 
 | Item | Result |
 | --- | --- |
-| Date | 2026-10-27 |
+| Date | 2026-10-30 |
 | Environment | Local, Windows, PostgreSQL 18, demo seed data |
 | scripts/smoke-test.js | 28 passed, 0 failed |
 | scripts/flow-test.js | 26 passed, 0 failed (fresh seed data) |
-| Tester | (write your name) |
+| Tester | (M.M.Umar Munzif) |
 
 Result key: PASS = verified by the scripts above. PARTIAL = status code verified but the exact numbers or side effect were not checked. `[ ]` = not tested yet.
 
 Not yet tested:
 - 9: needs the leave request API from Backend 2.
-- 32: check that no secrets or .env are committed (run `git check-ignore .env` before the first push; it should print `.env`).
+
+Test 32: confirmed on 2026-10-30. The pushed commit (53 files) contains `.env.example` but no `.env` and no `node_modules`.
 
 Partial (status verified, exact numbers or side effects not checked): 14, 17, 19, 34.
