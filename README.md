@@ -1,33 +1,75 @@
-# HR Management System – Frontend (Intern 4)
+# React + TypeScript + Vite
 
-**Scope (Frontend Intern 4 – Access, Dashboard & Recruitment UX):**
-Module 4 Authentication & RBAC · Module 7 Dashboard & Reports · Module 8 Notifications · Module 10 Recruitment & Onboarding.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Built with React 18 + Vite + React Router. All data is **sample/mock data** in `src/data.js` – no backend yet.
-Any policy-like values (roles, permissions, password rules, session timeout, lockout, payroll figures) are placeholders and **need stakeholder confirmation**.
+Currently, two official plugins are available:
 
-## Run
-```bash
-npm install
-npm run dev      # http://localhost:5173
-npm run build
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+
+## React Compiler
+
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
+
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+
 ```
 
-## Demo logins (from `src/data.js`)
-| Role | Email | Password |
-|---|---|---|
-| Admin | admin@hr.test | Admin@123 |
-| HR Manager | manager.hr@hr.test | Pass@1234 |
-| HR Officer | officer@hr.test | Pass@1234 |
-| Manager | lead@hr.test | Pass@1234 |
-| Employee | staff@hr.test | Pass@1234 |
-Password-reset demo code: `123456`.
+You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
 
-## What's included
-- **Auth/RBAC:** login (error + lockout state), forgot/reset password, route guards by permission, role–permission matrix, user role assignment, idle-session logout.
-- **Dashboard/Reports:** KPIs, weekly attendance, headcount, pending leave; headcount/attendance/payroll reports with filters; Export Excel (CSV) and PDF (browser print). Payroll report hidden without `reports.payroll`.
-- **Notifications:** filters, read/unread, mark all read, HR announcements, email preferences, header badge.
-- **Recruitment:** vacancies, applicant pipeline, interview scheduling, onboarding document checklist, probation tracking. View-only mode without `recruitment.manage`.
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-## Connecting the backend later
-Replace the mock state in `src/store.jsx` and the imports from `src/data.js` with API calls. Move auth tokens to secure, server-controlled storage.
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+
+```

@@ -1,0 +1,10 @@
+export const pad=n=>String(n).padStart(2,'0');
+export const iso=d=>{const x=new Date(d);return x.getFullYear()+'-'+pad(x.getMonth()+1)+'-'+pad(x.getDate())};
+export const today=()=>iso(new Date());
+export const addDays=(d,n)=>{const x=new Date(d+'T00:00');x.setDate(x.getDate()+n);return iso(x)};
+export const fmtD=d=>d?new Date(d+'T00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'–';
+export const fmtDT=t=>new Date(t).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+export const isWeekend=d=>{const g=new Date(d+'T00:00').getDay();return g===0||g===6};
+export const money=n=>Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+export const sum=(a,f)=>a.reduce((s,x)=>s+(f?f(x):x),0);
+export const initials=n=>n.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();

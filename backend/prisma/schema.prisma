@@ -1,0 +1,346 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ===== Auth and roles =====
+model Role {
+  id          Int              @id @default(autoincrement())
+  name        String           @unique
+  users       User[]
+  permissions RolePermission[]
+}
+
+model Permission {
+  id    Int              @id @default(autoincrement())
+  code  String           @unique
+  roles RolePermission[]
+}
+
+model RolePermission {
+  roleId       Int
+  permissionId Int
+  role         Role       @relation(fields: [roleId], references: [id])
+  permission   Permission @relation(fields: [permissionId], references: [id])
+
+  @@id([roleId, permissionId])
+}
+
+model User {
+  id            Int                  @id @default(autoincrement())
+  email         String               @unique
+  passwordHash  String
+  roleId        Int
+  employeeId    Int?                 @unique
+  active        Boolean              @default(true)
+  role          Role                 @relation(fields: [roleId], references: [id])
+  employee      Employee?            @relation(fields: [employeeId], references: [id])
+  resetTokens   PasswordResetToken[]
+  notifications Notification[]
+  announcements Announcement[]
+  leaveDecisions LeaveRequest[]      @relation("LeaveDecider")
+}
+
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  tokenHash String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+// ===== Organization =====
+model Department {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  employees Employee[]
+  vacancies Vacancy[]
+}
+
+model Designation {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  employees Employee[]
+}
+
+model Branch {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  location  String?
+  employees Employee[]
+}
+
+model Employee {
+  id               Int                 @id @default(autoincrement())
+  employeeCode     String              @unique
+  name             String
+  email            String              @unique
+  phone            String?
+  address          String?
+  joiningDate      DateTime
+  departmentId     Int
+  designationId    Int
+  branchId         Int
+  managerId        Int?
+  status           String              @default("Active") // Active, Probation, Inactive
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  department       Department          @relation(fields: [departmentId], references: [id])
+  designation      Designation         @relation(fields: [designationId], references: [id])
+  branch           Branch              @relation(fields: [branchId], references: [id])
+  manager          Employee?           @relation("Reports", fields: [managerId], references: [id])
+  reports          Employee[]          @relation("Reports")
+  user             User?
+  documents        EmployeeDocument[]
+  attendance       Attendance[]
+  leaveRequests    LeaveRequest[]
+  leaveBalances    LeaveBalance[]
+  salary           SalaryStructure?
+  allowances       Allowance[]
+  deductions       Deduction[]
+  payslips         Payslip[]
+  goals            Goal[]
+  reviewsReceived  PerformanceReview[] @relation("ReviewEmployee")
+  reviewsGiven     PerformanceReview[] @relation("ReviewReviewer")
+  onboardingTasks  OnboardingTask[]
+  probationRecords ProbationRecord[]
+}
+
+model EmployeeDocument {
+  id         Int      @id @default(autoincrement())
+  employeeId Int
+  fileName   String
+  fileType   String
+  filePath   String
+  uploadedAt DateTime @default(now())
+  employee   Employee @relation(fields: [employeeId], references: [id])
+
+  @@index([employeeId])
+}
+
+// ===== Attendance =====
+model AttendanceSetting {
+  id                 Int    @id @default(1)
+  workStart          String @default("08:30")
+  workEnd            String @default("17:00")
+  graceMinutes       Int    @default(15)
+  overtimeAfterHours Int    @default(8)
+}
+
+model Attendance {
+  id              Int       @id @default(autoincrement())
+  employeeId      Int
+  date            DateTime
+  checkIn         DateTime
+  checkOut        DateTime?
+  status          String    @default("Present") // Present, Late, Early, Absent, On Leave
+  workedMinutes   Int       @default(0)
+  overtimeMinutes Int       @default(0)
+  employee        Employee  @relation(fields: [employeeId], references: [id])
+
+  @@index([employeeId, date])
+}
+
+// ===== Leave =====
+model LeaveType {
+  id          Int            @id @default(autoincrement())
+  name        String         @unique
+  daysPerYear Int
+  balances    LeaveBalance[]
+  requests    LeaveRequest[]
+}
+
+model LeaveBalance {
+  id            Int       @id @default(autoincrement())
+  employeeId    Int
+  leaveTypeId   Int
+  year          Int
+  remainingDays Int
+  employee      Employee  @relation(fields: [employeeId], references: [id])
+  leaveType     LeaveType @relation(fields: [leaveTypeId], references: [id])
+
+  @@unique([employeeId, leaveTypeId, year])
+}
+
+model LeaveRequest {
+  id          Int       @id @default(autoincrement())
+  employeeId  Int
+  leaveTypeId Int
+  startDate   DateTime
+  endDate     DateTime
+  reason      String
+  status      String    @default("Pending") // Pending, Approved, Rejected, Cancelled
+  decidedById Int?
+  decidedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  employee    Employee  @relation(fields: [employeeId], references: [id])
+  leaveType   LeaveType @relation(fields: [leaveTypeId], references: [id])
+  decidedBy   User?     @relation("LeaveDecider", fields: [decidedById], references: [id])
+
+  @@index([employeeId, status])
+}
+
+// ===== Payroll =====
+model SalaryStructure {
+  id          Int      @id @default(autoincrement())
+  employeeId  Int      @unique
+  basicSalary Float
+  employee    Employee @relation(fields: [employeeId], references: [id])
+}
+
+model Allowance {
+  id         Int      @id @default(autoincrement())
+  employeeId Int
+  name       String
+  amount     Float
+  employee   Employee @relation(fields: [employeeId], references: [id])
+}
+
+model Deduction {
+  id         Int      @id @default(autoincrement())
+  employeeId Int
+  name       String
+  amount     Float
+  employee   Employee @relation(fields: [employeeId], references: [id])
+}
+
+model PayrollSetting {
+  id                 Int   @id @default(1)
+  epfEmployeeRate    Float @default(0.08)
+  epfEmployerRate    Float @default(0.12)
+  etfRate            Float @default(0.03)
+  overtimeMultiplier Float @default(1.5)
+}
+
+model PayrollRun {
+  id        Int       @id @default(autoincrement())
+  month     String
+  status    String    @default("Completed")
+  createdAt DateTime  @default(now())
+  payslips  Payslip[]
+}
+
+model Payslip {
+  id           Int        @id @default(autoincrement())
+  payrollRunId Int
+  employeeId   Int
+  basic        Float
+  allowances   Float
+  overtimePay  Float
+  deductions   Float
+  epfEmployee  Float
+  epfEmployer  Float
+  etf          Float
+  netSalary    Float
+  payrollRun   PayrollRun @relation(fields: [payrollRunId], references: [id])
+  employee     Employee   @relation(fields: [employeeId], references: [id])
+
+  @@unique([payrollRunId, employeeId])
+}
+
+// ===== Notifications and announcements =====
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  message   String
+  type      String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId, isRead])
+}
+
+model Announcement {
+  id         Int      @id @default(autoincrement())
+  title      String
+  body       String
+  postedById Int
+  createdAt  DateTime @default(now())
+  postedBy   User     @relation(fields: [postedById], references: [id])
+}
+
+// ===== Performance =====
+model Goal {
+  id         Int      @id @default(autoincrement())
+  employeeId Int
+  title      String
+  dueDate    DateTime
+  progress   Int      @default(0)
+  status     String   @default("Pending")
+  employee   Employee @relation(fields: [employeeId], references: [id])
+
+  @@index([employeeId])
+}
+
+model PerformanceReview {
+  id         Int      @id @default(autoincrement())
+  employeeId Int
+  reviewerId Int
+  period     String
+  rating     Int
+  feedback   String?
+  createdAt  DateTime @default(now())
+  employee   Employee @relation("ReviewEmployee", fields: [employeeId], references: [id])
+  reviewer   Employee @relation("ReviewReviewer", fields: [reviewerId], references: [id])
+
+  @@index([employeeId])
+}
+
+// ===== Recruitment and onboarding =====
+model Vacancy {
+  id           Int         @id @default(autoincrement())
+  title        String
+  departmentId Int
+  description  String
+  status       String      @default("Open") // Open, Closed
+  createdAt    DateTime    @default(now())
+  department   Department  @relation(fields: [departmentId], references: [id])
+  applicants   Applicant[]
+}
+
+model Applicant {
+  id         Int         @id @default(autoincrement())
+  vacancyId  Int
+  name       String
+  email      String
+  phone      String?
+  stage      String      @default("Applied") // Applied, Interview, Selected, Rejected
+  createdAt  DateTime    @default(now())
+  vacancy    Vacancy     @relation(fields: [vacancyId], references: [id])
+  interviews Interview[]
+
+  @@index([vacancyId])
+}
+
+model Interview {
+  id          Int       @id @default(autoincrement())
+  applicantId Int
+  scheduledAt DateTime
+  interviewer String
+  notes       String?
+  applicant   Applicant @relation(fields: [applicantId], references: [id])
+}
+
+model OnboardingTask {
+  id           Int      @id @default(autoincrement())
+  employeeId   Int
+  title        String
+  done         Boolean  @default(false)
+  documentName String?
+  employee     Employee @relation(fields: [employeeId], references: [id])
+}
+
+model ProbationRecord {
+  id         Int      @id @default(autoincrement())
+  employeeId Int
+  startDate  DateTime
+  endDate    DateTime
+  status     String   @default("In Probation")
+  employee   Employee @relation(fields: [employeeId], references: [id])
+}

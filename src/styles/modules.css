@@ -1,0 +1,158 @@
+/* Styles for Attendance, Leave and Payroll. All classes start with "hr-" so they will not clash with other interns' CSS.
+   Theme: light blue + white. */
+:root {
+  --hr-ink: #16324f;
+  --hr-muted: #5b7189;
+  --hr-line: #d6e6f8;
+  --hr-line-strong: #bcd3ec;
+  --hr-bg: #eef6fe;          /* soft light blue (table headers, hover) */
+  --hr-bg-soft: #f6faff;
+  --hr-card: #ffffff;
+  --hr-accent: #2674cf;
+  --hr-accent-dark: #1b5cae;
+  --hr-accent-soft: #e1eefc;
+  --hr-green: #1d7a45;
+  --hr-red: #b3261e;
+  --hr-orange: #a85b00;
+  --hr-blue: #1f5fa8;
+  --hr-shadow: 0 2px 10px rgba(38, 116, 207, 0.08);
+  --hr-shadow-lg: 0 18px 50px rgba(22, 50, 79, 0.25);
+}
+
+/* top navigation */
+.hr-nav {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--hr-line);
+  box-shadow: 0 2px 12px rgba(38, 116, 207, 0.08);
+}
+.hr-nav a {
+  color: var(--hr-muted); text-decoration: none; font-weight: 600;
+  padding: 7px 16px; border-radius: 999px;
+  transition: background 0.15s, color 0.15s;
+}
+.hr-nav a:hover { background: var(--hr-accent-soft); color: var(--hr-accent-dark); }
+.hr-nav a.active { background: var(--hr-accent); color: #fff; }
+.hr-nav a:focus-visible, .hr-nav select:focus-visible { outline: 2px solid var(--hr-accent); outline-offset: 2px; }
+.hr-nav select {
+  margin-left: auto; font: inherit; color: var(--hr-ink);
+  padding: 6px 12px; border: 1px solid var(--hr-line-strong); border-radius: 999px; background: #fff; cursor: pointer;
+}
+
+.hr-page { max-width: 1100px; margin: 0 auto; padding: 28px 16px 56px; color: var(--hr-ink); }
+.hr-page h1 { font-size: 1.7rem; margin: 0 0 18px; color: #0f3a66; letter-spacing: -0.01em; }
+.hr-page h2 { font-size: 1.1rem; margin: 0 0 8px; color: #174675; }
+
+.hr-card { background: var(--hr-card); border: 1px solid var(--hr-line); border-radius: 12px; padding: 18px; margin-bottom: 16px; box-shadow: var(--hr-shadow); }
+.hr-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.hr-cards .hr-card { margin-bottom: 0; border-left: 4px solid var(--hr-accent); }
+.hr-balance { display: flex; flex-direction: column; gap: 2px; }
+.hr-balance strong { font-size: 1.9rem; line-height: 1.1; color: var(--hr-accent-dark); }
+
+.hr-row { display: flex; align-items: center; gap: 8px; }
+.hr-between { justify-content: space-between; }
+.hr-end { justify-content: flex-end; margin-top: 12px; }
+.hr-wrap { flex-wrap: wrap; }
+.hr-muted { color: var(--hr-muted); margin: 4px 0; font-size: 0.92rem; }
+.hr-text-red { color: var(--hr-red); }
+.hr-state { text-align: center; color: var(--hr-muted); padding: 28px 8px; background: var(--hr-bg-soft); border-radius: 10px; }
+
+/* buttons */
+.hr-btn { font: inherit; font-weight: 500; border: 1px solid transparent; border-radius: 8px; padding: 7px 16px; cursor: pointer; background: #fff; color: var(--hr-ink); transition: background 0.15s, box-shadow 0.15s, transform 0.05s; }
+.hr-btn:active:not(:disabled) { transform: translateY(1px); }
+.hr-btn:focus-visible, .hr-tab:focus-visible { outline: 2px solid var(--hr-accent); outline-offset: 2px; }
+.hr-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.hr-btn-primary { background: var(--hr-accent); color: #fff; box-shadow: 0 1px 4px rgba(38, 116, 207, 0.35); }
+.hr-btn-primary:hover:not(:disabled) { background: var(--hr-accent-dark); }
+.hr-btn-success { background: var(--hr-green); color: #fff; }
+.hr-btn-success:hover:not(:disabled) { background: #176238; }
+.hr-btn-danger { background: var(--hr-red); color: #fff; }
+.hr-btn-danger:hover:not(:disabled) { background: #8f1e18; }
+.hr-btn-ghost { border-color: var(--hr-line-strong); background: #fff; color: var(--hr-accent-dark); }
+.hr-btn-ghost:hover:not(:disabled) { background: var(--hr-accent-soft); }
+
+/* forms */
+.hr-field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+.hr-field label, .hr-inline-field { font-size: 0.9rem; font-weight: 600; color: #25507f; }
+.hr-inline-field { display: flex; flex-direction: column; gap: 3px; }
+.hr-page input, .hr-page select, .hr-page textarea, .hr-modal input, .hr-modal select, .hr-modal textarea {
+  font: inherit; padding: 7px 10px; border: 1px solid var(--hr-line-strong); border-radius: 8px; background: #fff; color: var(--hr-ink); min-width: 0;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.hr-page input:focus, .hr-page select:focus, .hr-page textarea:focus, .hr-modal input:focus, .hr-modal select:focus, .hr-modal textarea:focus {
+  outline: none; border-color: var(--hr-accent); box-shadow: 0 0 0 3px rgba(38, 116, 207, 0.18);
+}
+.hr-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.hr-fieldset { border: 1px solid var(--hr-line); border-radius: 8px; margin: 0 0 12px; padding: 10px 12px; background: var(--hr-bg-soft); }
+.hr-fieldset legend { font-weight: 600; padding: 0 6px; color: #25507f; }
+.hr-item-row { margin-bottom: 8px; }
+.hr-item-row input:first-child { flex: 2; }
+.hr-item-row input:nth-child(2) { flex: 1; }
+
+/* alerts */
+.hr-alert { display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; border-radius: 8px; margin: 10px 0; font-size: 0.93rem; }
+.hr-alert-error { background: #fdecea; color: var(--hr-red); border: 1px solid #f4c2be; }
+.hr-alert-success { background: #e8f5ed; color: var(--hr-green); border: 1px solid #b9dfc7; }
+.hr-alert-close { background: none; border: 0; font-size: 1.2rem; cursor: pointer; color: inherit; }
+
+/* table */
+.hr-table-wrap { overflow-x: auto; border: 1px solid var(--hr-line); border-radius: 10px; }
+.hr-table { width: 100%; border-collapse: collapse; font-size: 0.93rem; background: #fff; }
+.hr-table th, .hr-table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--hr-line); white-space: nowrap; }
+.hr-table thead th { background: var(--hr-bg); font-weight: 600; color: #25507f; }
+.hr-table tbody tr:hover td { background: var(--hr-bg-soft); }
+.hr-table tbody tr:last-child td, .hr-table tbody tr:last-child th { border-bottom: 0; }
+
+/* badges */
+.hr-badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 600; }
+.hr-badge-green { background: #e3f3ea; color: var(--hr-green); }
+.hr-badge-orange { background: #fcefd9; color: var(--hr-orange); }
+.hr-badge-red { background: #fbe4e2; color: var(--hr-red); }
+.hr-badge-blue { background: #dcebfb; color: var(--hr-blue); }
+.hr-badge-grey { background: #e9eff5; color: var(--hr-muted); }
+
+/* attendance totals */
+.hr-stats { display: flex; gap: 12px; flex-wrap: wrap; margin: 14px 0; }
+.hr-stats div { display: flex; flex-direction: column; min-width: 110px; padding: 10px 16px; background: var(--hr-bg); border: 1px solid var(--hr-line); border-radius: 10px; }
+.hr-stats strong { font-size: 1.3rem; color: var(--hr-accent-dark); }
+.hr-stats span { color: var(--hr-muted); font-size: 0.85rem; }
+
+/* tabs */
+.hr-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--hr-line); margin-bottom: 12px; flex-wrap: wrap; }
+.hr-tab { font: inherit; background: none; border: 0; border-bottom: 3px solid transparent; padding: 8px 14px; cursor: pointer; color: var(--hr-muted); border-radius: 8px 8px 0 0; transition: background 0.15s, color 0.15s; }
+.hr-tab:hover { background: var(--hr-bg); color: var(--hr-accent-dark); }
+.hr-tab-active { color: var(--hr-accent); border-bottom-color: var(--hr-accent); font-weight: 600; }
+
+/* modal */
+.hr-modal-backdrop { position: fixed; inset: 0; background: rgba(15, 45, 80, 0.40); backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 50; }
+.hr-modal { background: #fff; color: var(--hr-ink); border: 1px solid var(--hr-line); border-top: 4px solid var(--hr-accent); border-radius: 12px; padding: 18px 20px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; box-shadow: var(--hr-shadow-lg); }
+.hr-modal-wide { max-width: 640px; }
+.hr-modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.hr-modal-head h2 { margin: 0; font-size: 1.15rem; color: #0f3a66; }
+.hr-details { display: grid; grid-template-columns: 110px 1fr; gap: 8px 12px; margin: 0; }
+.hr-details dt { color: var(--hr-muted); }
+.hr-details dd { margin: 0; }
+
+/* payslip */
+.hr-payslip-table td:last-child, .hr-payslip-table th:last-child { text-align: right; }
+.hr-subtotal th, .hr-subtotal td { background: var(--hr-bg); }
+.hr-net th, .hr-net td { font-size: 1.1rem; font-weight: 700; border-top: 2px solid var(--hr-accent); background: var(--hr-accent-soft); color: #0f3a66; }
+
+@media (max-width: 600px) {
+  .hr-grid-2 { grid-template-columns: 1fr; }
+  .hr-details { grid-template-columns: 1fr; }
+  .hr-nav { padding: 8px 12px; }
+}
+
+/* Print: only the payslip is printed */
+@media print {
+  body { background: #fff !important; }
+  body * { visibility: hidden !important; }
+  .hr-modal, .hr-modal * { visibility: visible !important; }
+  .hr-modal { position: absolute; inset: 0; max-width: none; max-height: none; box-shadow: none; border: 0; padding: 0; }
+  .hr-modal-backdrop { background: none; backdrop-filter: none; }
+  .hr-no-print { display: none !important; }
+}
